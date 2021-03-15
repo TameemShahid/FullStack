@@ -13,18 +13,21 @@ const Statistics = (props) => {
   if (total > 0) {
     return (
       <div>
-        <Statistic text="good" value={props.good}></Statistic>
-        <Statistic text="neutral" value={props.neutral}></Statistic>
-        <Statistic text="bad" value={props.bad}></Statistic>
-        <Statistic text="all" value={total}></Statistic>
-        <Statistic
-          text="average"
-          value={(props.good * 1 + props.bad * -1) / total}
-        ></Statistic>
-        <Statistic
-          text="positive"
-          value={(props.good / total) * 100}
-        ></Statistic>
+        <h2>Statistics</h2>
+        <table>
+          <Statistic text="good" value={props.good}></Statistic>
+          <Statistic text="neutral" value={props.neutral}></Statistic>
+          <Statistic text="bad" value={props.bad}></Statistic>
+          <Statistic text="all" value={total}></Statistic>
+          <Statistic
+            text="average"
+            value={(props.good * 1 + props.bad * -1) / total}
+          ></Statistic>
+          <Statistic
+            text="positive"
+            value={(props.good / total) * 100}
+          ></Statistic>
+        </table>
       </div>
     );
   } else {
@@ -38,9 +41,12 @@ const Statistics = (props) => {
 
 const Statistic = (props) => {
   return (
-    <p>
-      {props.text} {props.value}
-    </p>
+    <tbody>
+      <tr>
+        <td>{props.text}</td>
+        <td>{props.value}</td>
+      </tr>
+    </tbody>
   );
 };
 

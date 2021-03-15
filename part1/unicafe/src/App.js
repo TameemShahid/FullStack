@@ -9,22 +9,25 @@ const Button = ({ text, handleClick }) => {
 };
 
 const Statistics = ({ good, neutral, bad }) => {
+  const total = good + neutral + bad;
+  const average = (good * 1 + bad * -1) / total;
+  const positives = (good / total) * 100;
+
   return (
     <div>
       <h2>Statistics</h2>
-      <Part text="good" count={good}></Part>
-      <Part text="neutral" count={neutral}></Part>
-      <Part text="bad" count={bad}></Part>
+      <Paragraph text={"good " + good}></Paragraph>
+      <Paragraph text={"neutral " + neutral}></Paragraph>
+      <Paragraph text={"bad " + bad}></Paragraph>
+      <Paragraph text={"all " + total}></Paragraph>
+      <Paragraph text={"average " + average}></Paragraph>
+      <Paragraph text={"positive " + positives + " %"}></Paragraph>
     </div>
   );
 };
 
-const Part = ({ text, count }) => {
-  return (
-    <p>
-      {text} {count}
-    </p>
-  );
+const Paragraph = ({ text }) => {
+  return <p>{text}</p>;
 };
 
 const App = () => {

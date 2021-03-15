@@ -1,5 +1,19 @@
 import React, { useState } from "react";
 
+const Button = ({ text, handleClick }) => {
+  return <button onClick={handleClick}>{text}</button>;
+};
+
+const Anecdote = ({ text, value }) => {
+  return (
+    <p>
+      {text}
+      <br />
+      has {value} votes
+    </p>
+  );
+};
+
 const App = () => {
   const anecdotes = [
     "If it hurts, do it more often",
@@ -12,21 +26,32 @@ const App = () => {
 
   const [selected, setSelcted] = useState(0);
   const [points, setPoints] = useState(Array(anecdotes.length).fill(0));
+  const [mostVoted, setMostVoted] = useState(0);
 
   const handleVote = (selected) => {
     const copy = [...points];
     copy[selected] += 1;
     setPoints(copy);
+
+    if (points[mostVoted] <= copy[selected]) {
+      setMostVoted(selected);
+    }
   };
 
   return (
     <div>
-      <p>{anecdotes[selected]}</p>
-      <p>has {points[selected]} votes</p>
-      <button onClick={() => handleVote(selected)}>vote</button>
-      <button onClick={() => setSelcted((selected + 1) % anecdotes.length)}>
-        next anecdote
-      </button>
+      <h2>Anecdote of the day</h2>
+      <Anecdote text={anecdotes[selected]} value={points[selected]}></Anecdote>
+      <Button text="vote" handleClick={() => handleVote(selected)}></Button>
+      <Button
+        text="next anecdote"
+        handleClick={() => setSelcted((selected + 1) % anecdotes.length)}
+      ></Button>
+      <h2>Anecdote with most votes</h2>
+      <Anecdote
+        text={anecdotes[mostVoted]}
+        value={points[mostVoted]}
+      ></Anecdote>
     </div>
   );
 };

@@ -13,17 +13,26 @@ const Statistics = ({ good, neutral, bad }) => {
   const average = (good * 1 + bad * -1) / total;
   const positives = (good / total) * 100;
 
-  return (
-    <div>
-      <h2>Statistics</h2>
-      <Paragraph text={"good " + good}></Paragraph>
-      <Paragraph text={"neutral " + neutral}></Paragraph>
-      <Paragraph text={"bad " + bad}></Paragraph>
-      <Paragraph text={"all " + total}></Paragraph>
-      <Paragraph text={"average " + average}></Paragraph>
-      <Paragraph text={"positive " + positives + " %"}></Paragraph>
-    </div>
-  );
+  if (total > 0) {
+    return (
+      <div>
+        <h2>Statistics</h2>
+        <Paragraph text={"good " + good}></Paragraph>
+        <Paragraph text={"neutral " + neutral}></Paragraph>
+        <Paragraph text={"bad " + bad}></Paragraph>
+        <Paragraph text={"all " + total}></Paragraph>
+        <Paragraph text={"average " + average}></Paragraph>
+        <Paragraph text={"positive " + positives + " %"}></Paragraph>
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        <h2>Statistics</h2>
+        <p>No feedback given</p>
+      </div>
+    );
+  }
 };
 
 const Paragraph = ({ text }) => {

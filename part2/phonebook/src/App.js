@@ -17,6 +17,25 @@ const App = () => {
   ]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
+  const [search, setSearch] = useState("");
+  const [searchResult, setSearchResult] = useState(persons);
+
+  const handleSearch = (event) => {
+    setSearch(event.target.value);
+    if (event.target.value !== "") {
+      console.log("Not empty");
+      const temp = persons.filter((person) => {
+        return person.name
+          .toUpperCase()
+          .includes(event.target.value.toUpperCase());
+      });
+      setSearchResult(temp);
+      console.log(temp);
+    } else {
+      setSearchResult(persons);
+      console.log(searchResult);
+    }
+  };
 
   const handleNameChange = (event) => {
     setNewName(event.target.value);
@@ -37,13 +56,19 @@ const App = () => {
       setPersons(persons.concat(newPerson));
       setNewName("");
       setNewNumber("");
+      setSearchResult(persons);
     }
   };
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <div>
+        filter shown with{" "}
+        <input type="text" value={search} onChange={handleSearch} />
+      </div>
       <form onSubmit={addNewPerson}>
+        <h2>add a new</h2>
         <div>
           name: <input value={newName} onChange={handleNameChange} />
         </div>
@@ -55,9 +80,9 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-      {persons.map((person) => {
-        return <Name key={person.name} person={person}></Name>;
-      })}
+      {search === ""
+        ? persons.map((person) => <Name person={person}></Name>)
+        : searchResult.map((result) => <Name person={result}></Name>)}
     </div>
   );
 };

@@ -2,7 +2,29 @@ import React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+const Country = ({ country }) => {
+  console.log(country);
+  return (
+    <div>
+      <h1>{country.name}</h1>
+      capital {country.capital} <br />
+      popluation {country.population}
+      <h2>Languages</h2>
+      <ul>
+        {country.languages.map((language) => {
+          return <li key={language.name}>{language.name}</li>;
+        })}{" "}
+      </ul>
+      <br />
+      <img src={country.flag} alt="Country Flag" width="150px" height="150px" />
+    </div>
+  );
+};
+
 const SearchResult = ({ searchResults }) => {
+  const [clicked, setClicked] = useState(false);
+  const [country, setCountry] = useState(searchResults);
+
   if (searchResults.length > 10) {
     console.log(
       "Too many matches, specify another filter",
@@ -16,35 +38,25 @@ const SearchResult = ({ searchResults }) => {
         {searchResults.map((result) => {
           return (
             <li key={result.name} style={{ listStyle: "none" }}>
-              {result.name}
+              {result.name}{" "}
+              <button
+                onClick={() => {
+                  setClicked(!clicked);
+                  setCountry(result);
+                }}
+              >
+                show
+              </button>
             </li>
           );
         })}
+        {clicked ? <Country country={country}></Country> : ""}
       </div>
     );
   } else if (searchResults.length === 1) {
     console.log("Show the country details", searchResults.length);
     const country = searchResults[0];
-    return (
-      <div>
-        <h1>{country.name}</h1>
-        capital {country.capital} <br />
-        popluation {country.population}
-        <h2>Languages</h2>
-        <ul>
-          {country.languages.map((language) => {
-            return <li key={language.name}>{language.name}</li>;
-          })}{" "}
-        </ul>
-        <br />
-        <img
-          src={country.flag}
-          alt="Country Flag"
-          width="150px"
-          height="150px"
-        />
-      </div>
-    );
+    return <Country country={country}></Country>;
   }
   return <div>Please enter a filter</div>;
 };
@@ -72,9 +84,11 @@ function App() {
 
     setSearchResult(
       countries.filter((country) => {
-        return country.name.includes(capitalizeFirstLetter(value));
+        console.log(country.name.toLowerCase());
+        return country.name.toLowerCase().includes(value.toLowerCase());
       })
     );
+    console.log("printing countries after searching: ", searchResult);
   };
 
   return (

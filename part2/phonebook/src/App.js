@@ -60,6 +60,15 @@ const App = () => {
     }
   };
 
+  const handleDelete = (id, name) => {
+    const result = window.confirm(`Delete ${name}`);
+    if (result) {
+      personsService
+        .remove(id)
+        .then(setPersons(persons.filter((person) => person.id !== id)));
+    }
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -75,10 +84,18 @@ const App = () => {
       <h2>Numbers</h2>
       {search === ""
         ? persons.map((person) => (
-            <Person key={person.name} person={person}></Person>
+            <Person
+              key={person.name}
+              person={person}
+              handleClick={handleDelete}
+            ></Person>
           ))
         : searchResult.map((result) => (
-            <Person key={result.name} person={result}></Person>
+            <Person
+              key={result.name}
+              person={result}
+              handleClick={handleDelete}
+            ></Person>
           ))}
     </div>
   );

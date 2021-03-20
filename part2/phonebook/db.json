@@ -24,16 +24,6 @@
       "name": "Martin Fowler",
       "number": "12345678",
       "id": 5
-    },
-    {
-      "name": "Tameem Shahid",
-      "number": "12-34-56789",
-      "id": 6
-    },
-    {
-      "name": "Lala Land",
-      "number": "98-76-54321",
-      "id": 7
     }
   ]
 }

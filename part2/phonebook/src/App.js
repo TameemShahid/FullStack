@@ -45,10 +45,23 @@ const App = () => {
 
   const addNewPerson = (event) => {
     event.preventDefault();
-    if (persons.find((person) => person.name === newName)) {
-      alert(`${newName} is already added to phonebook`);
-      setNewName("");
-      setNewNumber("");
+    const person = persons.find((person) => person.name === newName);
+    if (person) {
+      console.log(person);
+      person.number = newNumber;
+      console.log(person);
+      const result = window.confirm(
+        `${newName} is already added to phonebook, replace the old number with a new one?`
+      );
+      if (result) {
+        personsService.update(person).then((modifiedPerson) => {
+          setPersons(
+            persons.map((p) => (p.id === person.id ? modifiedPerson : p))
+          );
+          setNewName("");
+          setNewNumber("");
+        });
+      }
     } else {
       const newPerson = { name: newName, number: newNumber };
       personsService.create(newPerson).then((newCreatedPerson) => {

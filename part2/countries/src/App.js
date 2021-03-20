@@ -2,8 +2,38 @@ import React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+const Weather = ({ country }) => {
+  const [weather, setWeather] = useState(undefined);
+  const api_key = process.env.REACT_APP_API_KEY;
+
+  useEffect(() => {
+    axios
+      .get(
+        `http://api.weatherstack.com/current?access_key=${api_key}&query=${country.name}`
+      )
+      .then((response) => {
+        setWeather(response.data);
+      });
+  }, []);
+
+  if (weather === undefined) {
+    return <div>Loading Temperature data</div>;
+  } else {
+    return (
+      <div>
+        <h2>Weather in {country.name}</h2>
+        <strong>Temperature:</strong> {weather.current.temperature} Celcius{" "}
+        <br />
+        <img src={weather.current.weather_icons} alt="" />
+        <br />
+        <strong>Wind: </strong>
+        {weather.current.wind_speed} mph direction {weather.current.wind_dir}
+      </div>
+    );
+  }
+};
+
 const Country = ({ country }) => {
-  console.log(country);
   return (
     <div>
       <h1>{country.name}</h1>
@@ -17,6 +47,8 @@ const Country = ({ country }) => {
       </ul>
       <br />
       <img src={country.flag} alt="Country Flag" width="150px" height="150px" />
+      <br />
+      <Weather country={country}></Weather>
     </div>
   );
 };
@@ -25,28 +57,25 @@ const SearchResult = ({ searchResults }) => {
   const [clicked, setClicked] = useState(false);
   const [country, setCountry] = useState(searchResults);
 
+  const handleClick = (result) => {
+    if (result.name === country.name) {
+      setClicked(!clicked);
+    } else {
+      setClicked(true);
+    }
+    setCountry(result);
+  };
+
   if (searchResults.length > 10) {
-    console.log(
-      "Too many matches, specify another filter",
-      searchResults.length
-    );
     return <div>Too many matches, specift another filter</div>;
   } else if (searchResults.length < 10 && searchResults.length > 1) {
-    console.log("Just show the countries name", searchResults.length);
     return (
       <div>
         {searchResults.map((result) => {
           return (
             <li key={result.name} style={{ listStyle: "none" }}>
               {result.name}{" "}
-              <button
-                onClick={() => {
-                  setClicked(!clicked);
-                  setCountry(result);
-                }}
-              >
-                show
-              </button>
+              <button onClick={() => handleClick(result)}>show</button>
             </li>
           );
         })}
@@ -54,7 +83,6 @@ const SearchResult = ({ searchResults }) => {
       </div>
     );
   } else if (searchResults.length === 1) {
-    console.log("Show the country details", searchResults.length);
     const country = searchResults[0];
     return <Country country={country}></Country>;
   }
@@ -66,14 +94,8 @@ function App() {
   const [countries, setCountries] = useState([]);
   const [searchResult, setSearchResult] = useState([]);
 
-  const capitalizeFirstLetter = (str) => {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  };
-
   useEffect(() => {
-    console.log("effect");
     axios.get("https://restcountries.eu/rest/v2/all").then((response) => {
-      console.log("promise fulfilled!");
       setCountries(response.data);
     });
   }, []);
@@ -84,11 +106,9 @@ function App() {
 
     setSearchResult(
       countries.filter((country) => {
-        console.log(country.name.toLowerCase());
         return country.name.toLowerCase().includes(value.toLowerCase());
       })
     );
-    console.log("printing countries after searching: ", searchResult);
   };
 
   return (

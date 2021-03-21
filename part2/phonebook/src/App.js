@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Filter from "./components/Filter";
+import Notification from "./components/Notification";
 import PersonForm from "./components/PersonForm";
 import Person from "./components/Person";
 import personsService from "./services/persons";
@@ -17,6 +18,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState(persons);
+  const [successMessage, setSuccessMessage] = useState(null);
 
   const handleSearch = (event) => {
     setSearch(event.target.value);
@@ -60,6 +62,12 @@ const App = () => {
           );
           setNewName("");
           setNewNumber("");
+          setSuccessMessage(
+            `Modified ${modifiedPerson.name} number to ${modifiedPerson.number}`
+          );
+          setTimeout(() => {
+            setSuccessMessage(null);
+          }, 5000);
         });
       }
     } else {
@@ -69,6 +77,10 @@ const App = () => {
         setNewName("");
         setNewNumber("");
         setSearchResult(persons);
+        setSuccessMessage(`Added ${newCreatedPerson.name}`);
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 5000);
       });
     }
   };
@@ -85,6 +97,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={successMessage}></Notification>
       <Filter search={search} handleSearch={handleSearch}></Filter>
       <h3>Add a new</h3>
       <PersonForm

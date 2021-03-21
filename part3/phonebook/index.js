@@ -74,10 +74,15 @@ app.delete("/api/persons/:id", (request, response) => {
 // CREATE NEW PERSON ROUTE
 app.post("/api/persons", (request, response) => {
   const body = request.body;
+  const check = persons.filter((p) => p.name === body.name);
 
   if (!body.name || !body.number) {
     response.status(400).json({
       error: "Content Missing",
+    });
+  } else if (check.length > 0) {
+    response.status(400).json({
+      error: "The name already exists in the phonebook",
     });
   } else {
     const person = {

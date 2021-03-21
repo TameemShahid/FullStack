@@ -18,7 +18,8 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState(persons);
-  const [successMessage, setSuccessMessage] = useState(null);
+  const [message, setMessage] = useState(null);
+  const [isError, setIsError] = useState(false);
 
   const handleSearch = (event) => {
     setSearch(event.target.value);
@@ -56,19 +57,36 @@ const App = () => {
         `${newName} is already added to phonebook, replace the old number with a new one?`
       );
       if (result) {
-        personsService.update(person).then((modifiedPerson) => {
-          setPersons(
-            persons.map((p) => (p.id === person.id ? modifiedPerson : p))
-          );
-          setNewName("");
-          setNewNumber("");
-          setSuccessMessage(
-            `Modified ${modifiedPerson.name} number to ${modifiedPerson.number}`
-          );
-          setTimeout(() => {
-            setSuccessMessage(null);
-          }, 5000);
-        });
+        personsService
+          .update(person)
+          .then((modifiedPerson) => {
+            setPersons(
+              persons.map((p) => (p.id === person.id ? modifiedPerson : p))
+            );
+            setNewName("");
+            setNewNumber("");
+            setMessage(
+              `Modified ${modifiedPerson.name} number to ${modifiedPerson.number}`
+            );
+            setTimeout(() => {
+              setMessage(null);
+            }, 5000);
+          })
+          .catch((error) => {
+            console.log("failed");
+            setNewName("");
+            setNewNumber("");
+            setIsError(true);
+            setMessage(
+              `Information of ${person.name} has already been removed from server`
+            );
+            setTimeout(() => {
+              setMessage(null);
+            }, 5000);
+            personsService.getAll().then((allPersons) => {
+              setPersons(allPersons);
+            });
+          });
       }
     } else {
       const newPerson = { name: newName, number: newNumber };
@@ -77,9 +95,9 @@ const App = () => {
         setNewName("");
         setNewNumber("");
         setSearchResult(persons);
-        setSuccessMessage(`Added ${newCreatedPerson.name}`);
+        setMessage(`Added ${newCreatedPerson.name}`);
         setTimeout(() => {
-          setSuccessMessage(null);
+          setMessage(null);
         }, 5000);
       });
     }
@@ -97,7 +115,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={successMessage}></Notification>
+      <Notification message={message} isError={isError}></Notification>
       <Filter search={search} handleSearch={handleSearch}></Filter>
       <h3>Add a new</h3>
       <PersonForm

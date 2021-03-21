@@ -38,6 +38,18 @@ app.get("/api/persons", (request, response) => {
   response.json(persons);
 });
 
+// INFO ROUTE
+app.get("/info", (request, response) => {
+  const date = new Date().toUTCString();
+  const reply = `<div>
+      <p>
+        Phonebook has info for ${persons.length} people <br />
+        ${date}
+      </p>
+    </div>`;
+  response.send(reply);
+});
+
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);

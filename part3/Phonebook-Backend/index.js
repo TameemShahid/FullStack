@@ -49,6 +49,7 @@ app.get("/", (request, response) => {
 
 // GET_ALL_PERSONS ROUTE
 app.get("/api/persons", (request, response) => {
+  console.log(Person.length);
   Person.find({}).then((result) => {
     response.json(result);
   });
@@ -59,7 +60,7 @@ app.get("/info", (request, response) => {
   const date = new Date().toUTCString();
   const reply = `<div>
       <p>
-        Phonebook has info for ${persons.length} people <br />
+        Phonebook has info for ${Person.length} people <br />
         ${date}
       </p>
     </div>`;
@@ -68,14 +69,13 @@ app.get("/info", (request, response) => {
 
 // Specific Person Route
 app.get("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-  const person = persons.find((p) => p.id === id);
-
-  if (person) {
-    response.json(person);
-  } else {
-    response.status(404).end();
-  }
+  Person.findById(request.params.id)
+    .then((result) => {
+      response.json(result);
+    })
+    .catch((error) => {
+      response.status(400).json({ error: "Content Missing!" });
+    });
 });
 
 // DELETE Route for a person
@@ -89,24 +89,24 @@ app.delete("/api/persons/:id", (request, response) => {
 // CREATE NEW PERSON ROUTE
 app.post("/api/persons", (request, response) => {
   const body = request.body;
-  const check = persons.filter((p) => p.name === body.name);
 
   if (!body.name || !body.number) {
     response.status(400).json({
       error: "Content Missing",
     });
-  } else if (check.length > 0) {
-    response.status(400).json({
-      error: "The name already exists in the phonebook",
-    });
   } else {
-    const person = {
-      id: Math.round(Math.random() * 10000),
+    const person = new Person({
       name: body.name,
       number: body.number,
-    };
-    persons = persons.concat(person);
-    response.json(person);
+    });
+    person
+      .save()
+      .then((savedPerson) => {
+        response.json(savedPerson);
+      })
+      .catch((error) => {
+        console.log("Error: ", error.message);
+      });
   }
 });
 

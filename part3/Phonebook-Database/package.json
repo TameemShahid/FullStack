@@ -1,0 +1,14 @@
+{
+  "name": "phonebook-database",
+  "version": "1.0.0",
+  "description": "MongoDB Atlas database for the Phonebook application in FullStack Open Course",
+  "main": "mongo.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Muhammad Tameem Shahid",
+  "license": "MIT",
+  "dependencies": {
+    "mongoose": "^5.12.3"
+  }
+}

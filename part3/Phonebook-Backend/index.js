@@ -1,12 +1,14 @@
-const { json } = require("express");
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
+require("dotenv").config();
+const Person = require("./models/mongo");
 
 morgan.token("body", (req, res) => {
   return JSON.stringify(req.body);
 });
 
+// DEFINING ALL APP.USE
 const app = express();
 app.use(express.json());
 app.use(
@@ -47,7 +49,9 @@ app.get("/", (request, response) => {
 
 // GET_ALL_PERSONS ROUTE
 app.get("/api/persons", (request, response) => {
-  response.json(persons);
+  Person.find({}).then((result) => {
+    response.json(result);
+  });
 });
 
 // INFO ROUTE
@@ -106,7 +110,7 @@ app.post("/api/persons", (request, response) => {
   }
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
 });

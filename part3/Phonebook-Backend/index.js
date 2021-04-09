@@ -49,7 +49,6 @@ app.get("/", (request, response) => {
 
 // GET_ALL_PERSONS ROUTE
 app.get("/api/persons", (request, response) => {
-  console.log(Person.length);
   Person.find({}).then((result) => {
     response.json(result);
   });
@@ -80,10 +79,13 @@ app.get("/api/persons/:id", (request, response) => {
 
 // DELETE Route for a person
 app.delete("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-  persons = persons.filter((p) => p.id !== id);
-
-  response.status(204).end();
+  Person.findByIdAndRemove(request.params.id)
+    .then((result) => {
+      response.status(204).end();
+    })
+    .catch((error) => {
+      console.log("Error: ", error.message);
+    });
 });
 
 // CREATE NEW PERSON ROUTE

@@ -48,10 +48,12 @@ app.get("/", (request, response) => {
 });
 
 // GET_ALL_PERSONS ROUTE
-app.get("/api/persons", (request, response) => {
-  Person.find({}).then((result) => {
-    response.json(result);
-  });
+app.get("/api/persons", (request, response, next) => {
+  Person.find({})
+    .then((result) => {
+      response.json(result);
+    })
+    .catch((error) => next(error));
 });
 
 // INFO ROUTE
@@ -72,9 +74,7 @@ app.get("/api/persons/:id", (request, response) => {
     .then((result) => {
       response.json(result);
     })
-    .catch((error) => {
-      response.status(400).json({ error: "Content Missing!" });
-    });
+    .catch((error) => next(error));
 });
 
 // DELETE Route for a person
@@ -83,9 +83,7 @@ app.delete("/api/persons/:id", (request, response) => {
     .then((result) => {
       response.status(204).end();
     })
-    .catch((error) => {
-      console.log("Error: ", error.message);
-    });
+    .catch((error) => next(error));
 });
 
 // CREATE NEW PERSON ROUTE
@@ -106,11 +104,26 @@ app.post("/api/persons", (request, response) => {
       .then((savedPerson) => {
         response.json(savedPerson);
       })
-      .catch((error) => {
-        console.log("Error: ", error.message);
-      });
+      .catch((error) => next(error));
   }
 });
+
+/* ERROR HANDLING MIDDLEWARE */
+const unknownEndpoint = (request, response) => {
+  response.status(400).json({ error: "Unknown Endpoint!" });
+};
+app.use(unknownEndpoint);
+
+const errorHandler = (error, request, response, next) => {
+  console.log(error.message);
+
+  if (error.name === "CastError") {
+    return response.status(400).json({ error: "Malformatted ID!" });
+  }
+
+  next(error);
+};
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {

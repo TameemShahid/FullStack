@@ -50,9 +50,7 @@ const App = () => {
     event.preventDefault();
     const person = persons.find((person) => person.name === newName);
     if (person) {
-      console.log(person);
       person.number = newNumber;
-      console.log(person);
       const result = window.confirm(
         `${newName} is already added to phonebook, replace the old number with a new one?`
       );
@@ -73,14 +71,12 @@ const App = () => {
             }, 5000);
           })
           .catch((error) => {
-            console.log("failed");
             setNewName("");
             setNewNumber("");
             setIsError(true);
-            setMessage(
-              `Information of ${person.name} has already been removed from server`
-            );
+            setMessage(`Error: ${error.response.data.error}`);
             setTimeout(() => {
+              setIsError(false);
               setMessage(null);
             }, 5000);
             personsService.getAll().then((allPersons) => {
@@ -90,16 +86,30 @@ const App = () => {
       }
     } else {
       const newPerson = { name: newName, number: newNumber };
-      personsService.create(newPerson).then((newCreatedPerson) => {
-        setPersons(persons.concat(newCreatedPerson));
-        setNewName("");
-        setNewNumber("");
-        setSearchResult(persons);
-        setMessage(`Added ${newCreatedPerson.name}`);
-        setTimeout(() => {
-          setMessage(null);
-        }, 5000);
-      });
+      personsService
+        .create(newPerson)
+        .then((newCreatedPerson) => {
+          setPersons(persons.concat(newCreatedPerson));
+          setNewName("");
+          setNewNumber("");
+          setSearchResult(persons);
+          setMessage(`Added ${newCreatedPerson.name}`);
+          setTimeout(() => {
+            setMessage(null);
+          }, 5000);
+        })
+        .catch((error) => {
+          console.log(`ERROR: ${error.response.data.error}`);
+          setNewName("");
+          setIsError(true);
+          setNewNumber("");
+          setSearchResult("");
+          setMessage(`Error: ${error.response.data.error}`);
+          setTimeout(() => {
+            setMessage(null);
+            setIsError(false);
+          }, 5000);
+        });
     }
   };
 
@@ -108,7 +118,12 @@ const App = () => {
     if (result) {
       personsService
         .remove(id)
-        .then(setPersons(persons.filter((person) => person.id !== id)));
+        .then(setPersons(persons.filter((person) => person.id !== id)))
+        .catch((error) => {
+          setIsError(true);
+          setMessage(`Error: ${error.response.data}`);
+          setTimeout(() => setMessage(null), 5000);
+        });
     }
   };
 

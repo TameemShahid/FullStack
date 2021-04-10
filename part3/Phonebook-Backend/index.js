@@ -3,6 +3,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 require("dotenv").config();
 const Person = require("./models/mongo");
+const { query } = require("express");
 
 morgan.token("body", (req, res) => {
   return JSON.stringify(req.body);
@@ -34,7 +35,7 @@ app.get("/api/persons", (request, response, next) => {
 });
 
 // INFO ROUTE
-app.get("/info", (request, response) => {
+app.get("/info", (request, response, next) => {
   const date = new Date().toUTCString();
   Person.countDocuments({})
     .then((count) => {
@@ -50,7 +51,7 @@ app.get("/info", (request, response) => {
 });
 
 // Specific Person Route
-app.get("/api/persons/:id", (request, response) => {
+app.get("/api/persons/:id", (request, response, next) => {
   Person.findById(request.params.id)
     .then((result) => {
       response.json(result);
@@ -59,7 +60,7 @@ app.get("/api/persons/:id", (request, response) => {
 });
 
 // DELETE Route for a person
-app.delete("/api/persons/:id", (request, response) => {
+app.delete("/api/persons/:id", (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
     .then((result) => {
       response.status(204).end();
@@ -92,7 +93,11 @@ app.put("/api/persons/:id", (request, response, next) => {
     number: body.number,
   };
 
-  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+  Person.findByIdAndUpdate(request.params.id, person, {
+    new: true,
+    runValidators: true,
+    context: query,
+  })
     .then((updatedPerson) => {
       response.json(updatedPerson);
     })

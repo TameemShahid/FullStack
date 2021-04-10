@@ -68,29 +68,23 @@ app.delete("/api/persons/:id", (request, response) => {
 });
 
 // CREATE NEW PERSON ROUTE
-app.post("/api/persons", (request, response) => {
+app.post("/api/persons", (request, response, next) => {
   const body = request.body;
 
-  if (!body.name || !body.number) {
-    response.status(400).json({
-      error: "Content Missing",
-    });
-  } else {
-    const person = new Person({
-      name: body.name,
-      number: body.number,
-    });
-    person
-      .save()
-      .then((savedPerson) => {
-        response.json(savedPerson);
-      })
-      .catch((error) => next(error));
-  }
+  const person = new Person({
+    name: body.name,
+    number: body.number,
+  });
+  person
+    .save()
+    .then((savedPerson) => {
+      response.json(savedPerson);
+    })
+    .catch((error) => next(error));
 });
 
 // UPDATE PERSON
-app.put("/api/persons/:id", (request, response) => {
+app.put("/api/persons/:id", (request, response, next) => {
   const body = request.body;
 
   const person = {
@@ -116,6 +110,8 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === "CastError") {
     return response.status(400).json({ error: "Malformatted ID!" });
+  } else if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
   }
 
   next(error);

@@ -4,12 +4,13 @@
   "description": "Blog list application, that allows user to save information about interesting blogs they have stumbled across the internet.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "test": "jest --verbose"
   },
   "author": "Muhammad Tameem Shahid",
   "license": "MIT",
   "devDependencies": {
+    "jest": "^26.6.3",
     "nodemon": "^2.0.7"
   },
   "dependencies": {
@@ -17,5 +18,8 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "mongoose": "^5.12.5"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }

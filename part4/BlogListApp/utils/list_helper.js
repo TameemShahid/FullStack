@@ -1,3 +1,4 @@
+const { result } = require("lodash");
 const lodash = require("lodash");
 
 const dummy = (blogsArray) => {
@@ -54,9 +55,51 @@ const mostBlogs = (blogsArray) => {
   }
 };
 
+const mostLikes = (blogsArray) => {
+  if (blogsArray.length === 0) {
+    return {};
+  } else {
+    // We use lodash library "groupBy" to group all the blog entries under
+    // single author array. We will get a result in the form of
+    // {'Author Name' : [...blogObjs]}
+    const authors = lodash.groupBy(blogsArray, "author");
+
+    // To get the authors and their blogs object in a more structured manner
+    // we use "forEach" method of lodash lib. We get the resultant array in the
+    // form : [ {author : "Tameem", blogs : [ {blogObj1}, {blogObj2} ] } ]
+    const authorsArray = [];
+    lodash.forEach(authors, (value, key) => {
+      authorsArray.push({ author: key, blogs: value });
+    });
+
+    const reducer = (sum, item) => {
+      return sum + item.likes;
+    };
+
+    // To find the author with the most number of likes over all of his blogs,
+    // we need to iterate through each of his/her blog and the number of likes.
+    // We again use lodash "forEach" to iterate over each author object, now
+    // each author object has "blogs" property that contains all of his/her
+    // written blogs, we use reduce function to get total likes and make an obj
+    // {author: "Tameem", likes : 137} , and save it in result array.
+    // Now we simply use "maxBy" function of lodash on result to get highest liked
+    // author
+    const result = [];
+    lodash.forEach(authorsArray, (value) => {
+      const sum = value.blogs.reduce(reducer, 0);
+      result.push({ author: value.author, likes: sum });
+    });
+    const x = lodash.maxBy(result, (value) => {
+      return value.likes;
+    });
+    return x;
+  }
+};
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
   mostBlogs,
+  mostLikes,
 };

@@ -44,6 +44,17 @@ test("blog post is added to DB correctly", async () => {
   expect(allNotes).toHaveLength(helper.initialBlogs.length + 1);
 });
 
+test("blog likes are defined", async () => {
+  const note = {
+    title: "Example Title 4",
+    author: "Denim Levis",
+    url: "www.example.url4.com",
+  };
+
+  const savedNote = await api.post("/api/blogs").send(note);
+  expect(savedNote.body.likes).toBe(0);
+});
+
 afterAll(async () => {
   await mongoose.connection.close();
 });

@@ -1,3 +1,5 @@
+const Blog = require("../models/blog");
+
 const initialBlogs = [
   {
     title: "Example Title 1",
@@ -13,6 +15,12 @@ const initialBlogs = [
   },
 ];
 
+const blogsInDB = async () => {
+  const notes = await Blog.find({});
+  return notes.map((note) => note.toJSON());
+};
+
 module.exports = {
   initialBlogs,
+  blogsInDB,
 };

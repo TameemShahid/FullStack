@@ -1,4 +1,3 @@
-const { result } = require("lodash");
 const lodash = require("lodash");
 
 const dummy = (blogsArray) => {

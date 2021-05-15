@@ -40,8 +40,8 @@ test("blog post is added to DB correctly", async () => {
 
   await api.post("/api/blogs").send(note).expect(201);
 
-  const allNotes = await helper.blogsInDB();
-  expect(allNotes).toHaveLength(helper.initialBlogs.length + 1);
+  const allBlogs = await helper.blogsInDB();
+  expect(allBlogs).toHaveLength(helper.initialBlogs.length + 1);
 });
 
 test("blog likes are defined", async () => {
@@ -51,8 +51,17 @@ test("blog likes are defined", async () => {
     url: "www.example.url4.com",
   };
 
-  const savedNote = await api.post("/api/blogs").send(note);
-  expect(savedNote.body.likes).toBe(0);
+  const savedBlog = await api.post("/api/blogs").send(note);
+  expect(savedBlog.body.likes).toBe(0);
+});
+
+test("blog post url and title must be defined", async () => {
+  const note = {
+    author: "Muhammad Tameem Shahid",
+    likes: 34,
+  };
+
+  await api.post("/api/blogs").send(note).expect(400);
 });
 
 afterAll(async () => {

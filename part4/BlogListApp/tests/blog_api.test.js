@@ -30,6 +30,20 @@ test("unique identifier of returned blogs is named id not _id", async () => {
   response.body.forEach((blog) => expect(blog.id).toBeDefined());
 });
 
+test("blog post is added to DB correctly", async () => {
+  const note = {
+    title: "Example Title 3",
+    author: "Amber Jones",
+    url: "www.example.url3.com",
+    likes: 12,
+  };
+
+  await api.post("/api/blogs").send(note).expect(201);
+
+  const allNotes = await helper.blogsInDB();
+  expect(allNotes).toHaveLength(helper.initialBlogs.length + 1);
+});
+
 afterAll(async () => {
   await mongoose.connection.close();
 });

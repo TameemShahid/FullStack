@@ -64,6 +64,14 @@ test("blog post url and title must be defined", async () => {
   await api.post("/api/blogs").send(note).expect(400);
 });
 
+test("blog post can be deleted", async () => {
+  const notes = helper.initialBlogs;
+
+  const noteToDelete = notes[0];
+
+  await api.delete(`/api/blogs/${noteToDelete.id}`).expect(204);
+});
+
 afterAll(async () => {
   await mongoose.connection.close();
 });

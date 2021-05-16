@@ -31,45 +31,55 @@ test("unique identifier of returned blogs is named id not _id", async () => {
 });
 
 test("blog post is added to DB correctly", async () => {
-  const note = {
+  const blog = {
     title: "Example Title 3",
     author: "Amber Jones",
     url: "www.example.url3.com",
     likes: 12,
   };
 
-  await api.post("/api/blogs").send(note).expect(201);
+  await api.post("/api/blogs").send(blog).expect(201);
 
   const allBlogs = await helper.blogsInDB();
   expect(allBlogs).toHaveLength(helper.initialBlogs.length + 1);
 });
 
 test("blog likes are defined", async () => {
-  const note = {
+  const blog = {
     title: "Example Title 4",
     author: "Denim Levis",
     url: "www.example.url4.com",
   };
 
-  const savedBlog = await api.post("/api/blogs").send(note);
+  const savedBlog = await api.post("/api/blogs").send(blog);
   expect(savedBlog.body.likes).toBe(0);
 });
 
 test("blog post url and title must be defined", async () => {
-  const note = {
+  const blog = {
     author: "Muhammad Tameem Shahid",
     likes: 34,
   };
 
-  await api.post("/api/blogs").send(note).expect(400);
+  await api.post("/api/blogs").send(blog).expect(400);
 });
 
 test("blog post can be deleted", async () => {
-  const notes = helper.initialBlogs;
+  const notes = await helper.blogsInDB();
 
-  const noteToDelete = notes[0];
+  const blogToDelete = notes[0];
 
-  await api.delete(`/api/blogs/${noteToDelete.id}`).expect(204);
+  await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+});
+
+test("likes of blog post can be updated", async () => {
+  const blogs = await helper.blogsInDB();
+
+  const blog = blogs[0];
+  blog.likes = 347;
+
+  const updatedBlog = await api.put(`/api/blogs/${blog.id}`).send(blog);
+  expect(updatedBlog.body.likes).toBe(347);
 });
 
 afterAll(async () => {
